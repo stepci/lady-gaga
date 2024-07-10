@@ -55,9 +55,14 @@ const defaultLoaderOptions = {
   oneofs: true
 }
 
-export async function makeRequest (proto: string | string[], { beforeRequest, afterResponse, loaderOptions = defaultLoaderOptions, options = {}, ...clientConfig }: gRPCRequest): Promise<gRPCResponse> {
+export async function makeRequest (proto: string | string[], { beforeRequest, afterResponse, loaderOptions = {}, options = {}, ...clientConfig }: gRPCRequest): Promise<gRPCResponse> {
   return new Promise(async (resolve, reject) => {
     try {
+			loaderOptions = {
+				...loaderOptions ?? {},
+				...defaultLoaderOptions
+			};
+
       const packageDefinition = await protoLoader.load(proto, loaderOptions) as any
 
       const { requestSerialize, responseDeserialize, requestStream, responseStream } = packageDefinition[clientConfig.service][clientConfig.method]
